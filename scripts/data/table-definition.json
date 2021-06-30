@@ -1,0 +1,20 @@
+{
+    "AttributeDefinitions": [
+      {
+        "AttributeName": "id",
+        "AttributeType": "N"
+      }
+    ],
+    "ProvisionedThroughput": {
+      "WriteCapacityUnits": 5,
+      "ReadCapacityUnits": 5
+    },
+    "TableName": "FashionProducts",
+    "KeySchema": [
+      {
+        "AttributeName": "id",
+        "KeyType": "HASH"
+      }
+    ]
+}
+  
