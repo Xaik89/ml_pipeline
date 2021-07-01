@@ -55,10 +55,10 @@ def load_data(args):
         int(Path(img).stem) for img in glob.glob(args.path_to_images + "*.jpg")
     ]
 
-    with open(args.csv_file, "r") as read_obj:
+    with open(args.csv_file) as read_obj:
         csv_reader = reader(read_obj)
         header = next(csv_reader)
-        if header != None:
+        if header is not None:
             for row in tqdm.tqdm(csv_reader):
                 item = FashionItem(
                     *row[:NUM_OF_ITEMS_BEFORE_ITEM_DISPLAY],
@@ -69,9 +69,7 @@ def load_data(args):
 
                 item.convert_to_db_type()
 
-                response = dynamodb.put_item(
-                    TableName="FashionProducts", Item=asdict(item)
-                )
+                dynamodb.put_item(TableName="FashionProducts", Item=asdict(item))
 
 
 if __name__ == "__main__":
