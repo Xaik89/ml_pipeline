@@ -1,17 +1,13 @@
-# built-in
 import json
 import os
 import typing as t
 
-# third party
 import albumentations as A
 import boto3
 import numpy as np
 from PIL import Image
 
 from db import DB
-
-# local
 from s3 import S3
 
 
@@ -104,10 +100,30 @@ class API_AWS:
             self._run_cv_model(name_folder_in_s3)
 
     def _save_to_s3_all_data(self, items, name_folder_in_s3):
-        pass
+        for item in items:
+            image_name = str(item["id"]) + ".jpg"
+            self._s3.copy_file_in_bucket(
+                os.path.join("images", image_name),
+                os.path.join(name_folder_in_s3, image_name),
+            )
+
+        metadata_path = os.path.join(name_folder_in_s3, "metadata.json")
+        self._s3.save_metadata(metadata_path, items)
 
     def _run_albumentations(self, folder_with_images):
-        pass
+        transform = A.Compose(
+            [
+                A.RandomCrop(width=50, height=70),
+                A.Resize(width=256, height=256),
+            ]
+        )
+
+        for im, path_im in self._s3.gen_of_images(folder_with_images):
+            im = np.array(im)
+            new_image = transform(image=im)["image"]
+
+            pil_image = Image.fromarray(np.uint8(new_image)).convert("RGB")
+            self._s3.save_new_image(pil_image, path_im)
 
     def _run_cv_model(self):
         pass
