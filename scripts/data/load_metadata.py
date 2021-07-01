@@ -64,9 +64,10 @@ def load_data(args):
                     *row[:NUM_OF_ITEMS_BEFORE_ITEM_DISPLAY],
                     productDisplayName=",".join(row[NUM_OF_ITEMS_BEFORE_ITEM_DISPLAY:]),
                 )
-                if int(item.id) in images_in_dataset:
-                    item.add_url()
+                if int(item.id) not in images_in_dataset:
+                    continue
 
+                item.add_url()
                 item.convert_to_db_type()
 
                 dynamodb.put_item(TableName="FashionProducts", Item=asdict(item))
