@@ -48,7 +48,7 @@ class S3:
 
                     yield Image.open(BytesIO(file_byte_string)), item["Key"]
 
-    def save_new_image(self, image, name):
+    def save_new_image(self, image, name: str):
         buffer = BytesIO()
         image.save(buffer, format="jpeg")
         buffer.seek(0)
