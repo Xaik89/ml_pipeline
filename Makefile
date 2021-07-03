@@ -21,6 +21,13 @@ install:
 pre-commit-install:
 	poetry run pre-commit install
 
+
+.PHONY: sls-install
+sls-install:
+	sudo apt install npm
+	sudo npm install -g serverless
+	sudo npm install --save-dev serverless-localstack
+
 #* Formatters
 .PHONY: codestyle
 codestyle:

@@ -1,7 +1,7 @@
 version: '2.1'
 services:
   localstack:
-    image: localstack/localstack:0.12.8
+    image: localstack/localstack #:0.12.8
     ports:
       - "80:80"
       - "443:443"
@@ -14,7 +14,9 @@ services:
       - DATA_DIR=/tmp/localstack/data
       - DOCKER_HOST=unix:///var/run/docker.sock
       - HOST_TMP_FOLDER=${TMPDIR}
-      - LAMBDA_EXECUTOR=docker
+      - LAMBDA_EXECUTOR=docker-reuse
+      - LAMBDA_REMOTE_DOCKER=false
+      - LAMBDA_REMOVE_CONTAINERS=true
     volumes:
       - "${TMPDIR:-/tmp/localstack}:/tmp/localstack"
       - "/var/run/docker.sock:/var/run/docker.sock"

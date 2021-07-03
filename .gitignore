@@ -1,0 +1,6 @@
+node_modules/
+__pycache__/
+.serverless/
+
+things_to_do.txt
+design_choices.txt

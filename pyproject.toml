@@ -9,9 +9,13 @@ description = ""
 [tool.poetry.dependencies]
 python = "^3.7"
 tqdm = "^4.61.0"
-boto3 = "1.17.100"
+boto3 = "1.17.49"
 Pillow = "^8.3.0"
 albumentations = "^1.0.0"
+torch = "^1.9.0"
+torchvision = "^0.10.0"
+jupyter = "^1.0.0"
+aioboto3 = "^9.0.0"
 
 
 [tool.poetry.dev-dependencies]
