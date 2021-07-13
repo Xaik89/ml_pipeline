@@ -17,7 +17,7 @@ class DB:
             "dynamodb",
             endpoint_url=endpoint_url,
             use_ssl=False,
-            region_name="eu-west-1",
+            region_name="us-east-1",
         )
 
         self._table = dynamodb.Table(self.TABLE_NAME)
