@@ -1,6 +1,7 @@
-node_modules/
 __pycache__/
-.serverless/
+data/
+.env
 
 things_to_do.txt
 design_choices.txt
+response.json

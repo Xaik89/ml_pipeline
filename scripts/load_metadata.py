@@ -27,7 +27,7 @@ class FashionItem:
 
     def add_url(self):
         self.imagePath = (
-            f"https://statis-s3-bucket.s3.eu-west-1.amazonaws.com/images/{self.id}.jpg"
+            f"https://statis-s3-bucket.s3.us-east-1.amazonaws.com/images/{self.id}.jpg"
         )
 
     def convert_to_db_type(self):
@@ -48,7 +48,7 @@ def load_data(args):
         "dynamodb",
         endpoint_url="http://localhost:4566",
         use_ssl=False,
-        region_name="eu-west-1",
+        region_name="us-east-1",
     )
 
     images_in_dataset = [

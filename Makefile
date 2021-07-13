@@ -22,11 +22,12 @@ pre-commit-install:
 	poetry run pre-commit install
 
 
-.PHONY: sls-install
-sls-install:
-	sudo apt install npm
-	sudo npm install -g serverless
-	sudo npm install --save-dev serverless-localstack
+.PHONY: aws-cli-install
+aws-cli-install:
+	curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+	unzip awscliv2.zip
+	sudo ./aws/install
+
 
 #* Formatters
 .PHONY: codestyle
