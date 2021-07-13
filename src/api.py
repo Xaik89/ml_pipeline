@@ -177,6 +177,7 @@ if __name__ == "__main__":
         action="store",
         default=1,
         dest="query",
+        type=int,
         help="which query to run from 1 up to 5th",
     )
 
