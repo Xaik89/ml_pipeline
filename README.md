@@ -1,13 +1,17 @@
 # Machine Learning Pipeline for AWS (with mock - LocalStack)
 
-Example how to build a machine learning full pipeline with AWS:
-clien_code -> DB -> S3 and run on this transformations or/and machine learning models.
-(AWS simulated by "LocalStack" soft)
+Example of how to build a machine learning full pipeline with AWS
+(AWS simulated by "LocalStack" soft).
+
+The flow of the system is:
+1) make a query to DataBase (DynamoDB)
+2) write the results: images and metadata to S3
+3) optionally: run transformations and computer vision deep learning models on images
 
 LocalStack runs under docker-compose.
-There also an example how to build SQS queue bounded with Lambda Functions, that runs in additional docker.
+There is also an example of how to build SQS queue bounded with Lambda Functions, that runs in additional docker.
 
-# Structure of code
+# Structure of the code
 
 * lambdas - package for lambda functions
 * localstack - docker-compose config for AWS simulations
@@ -20,10 +24,9 @@ There also an example how to build SQS queue bounded with Lambda Functions, that
 
 * make poetry-download
 * make install
-* source new env
 * make aws-cli-install
 
-Download dataset to this folder from this site:
+Download dataset into this folder from this site:
 https://www.kaggle.com/paramaggarwal/fashion-product-images-small
 
 ## Run
@@ -32,7 +35,7 @@ https://www.kaggle.com/paramaggarwal/fashion-product-images-small
 2) from another terminal: source poetry virtual env in  ~/.cache/pypoetry/virtualenvs/...
 3) run script to init DB and S3: `bash scripts/create_and_fill_db.sh` 
 4) run queries: `python api.py --query {number_of_query}`                                                                       
-   (number_of_query can be a number from 1 to 5, check api code to understand what options you have)
+   (number_of_query can be a number from 1 to 5, check api code to understand which options you have)
 
 5) you can run jupyter notebook with examples from this repo that uses api code.
 
