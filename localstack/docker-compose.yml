@@ -2,7 +2,7 @@ version: '3.7'
 services:
   localstack:
     container_name: localstack_main
-    image: localstack/localstack:latest
+    image: localstack/localstack:0.12.8 # localstack/localstack:latest for PRO
     hostname: localstack
     network_mode: bridge
     ports:
@@ -24,7 +24,7 @@ services:
       - "${TMPDIR:-/tmp/localstack}:/tmp/localstack"
       - "/var/run/docker.sock:/var/run/docker.sock"
       - ./bin:/docker-entrypoint-initaws.d
-    env_file: .env
+  #  env_file: .env
 
   # container for lambda func to copy files in s3
   # s3-copy-lambda:
