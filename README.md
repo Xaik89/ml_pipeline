@@ -1,6 +1,6 @@
 # Machine Learning Pipeline for AWS (with mock - LocalStack)
 
-Example how to build a machine learning full pipeline
+Example how to build a machine learning full pipeline with AWS:
 clien_code -> DB -> S3 and run on this transformations or/and machine learning models.
 (AWS simulated by "LocalStack" soft)
 
@@ -14,7 +14,9 @@ There also an example how to build SQS queue bounded with Lambda Functions, that
 * scripts - to populate AWS DB and S3 from dataset
 * src - source code for manage queries and additional proccesing
 
-# STEPS to start this package
+# How to use it
+
+## Installation
 
 * make poetry-download
 * make install
@@ -24,6 +26,8 @@ There also an example how to build SQS queue bounded with Lambda Functions, that
 Download dataset to this folder from this site:
 https://www.kaggle.com/paramaggarwal/fashion-product-images-small
 
+## Run
+
 1) run: `docker-compose up` from localstack folder
 2) from another terminal: source poetry virtual env in  ~/.cache/pypoetry/virtualenvs/...
 3) run script to init DB and S3: `bash scripts/create_and_fill_db.sh` 
@@ -31,3 +35,8 @@ https://www.kaggle.com/paramaggarwal/fashion-product-images-small
    (number_of_query can be a number from 1 to 5, check api code to understand what options you have)
 
 5) you can run jupyter notebook with examples from this repo that uses api code.
+
+---
+## Architecture of the system to make it scalable
+
+![image](https://user-images.githubusercontent.com/10304038/125674920-127f026c-423d-41fb-a6b1-ba5448b279eb.png)
