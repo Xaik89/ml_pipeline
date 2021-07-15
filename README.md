@@ -6,9 +6,9 @@ Example of how to build a machine learning full pipeline with AWS
 The flow of the system is:
 1) make a query to DataBase (DynamoDB)
 2) write the results: images and metadata to S3
-3) optionally: run transformations and computer vision deep learning models on images
+3) optionally: run transformations (augmentations) and computer vision deep learning models on results images
 
-LocalStack runs under docker-compose.
+LocalStack runs under docker-compose.  
 There is also an example of how to build an SQS queue bonded
 with Lambda Functions, which runs an additional docker.
 
@@ -43,4 +43,17 @@ https://www.kaggle.com/paramaggarwal/fashion-product-images-small
 ---
 ## The architecture of the system to make it scalable.
 
+* DynamoDB (NoSQL) provides scalability through its architecture - multiple partitions are created by uniform distribution of the uniq (id) key.
+* SQS allows you to create a job queue. One queue per task - copying images to s3, applying transformations (augmentations), launching ml models on images.
+* Lambda functions are bound to each queue, consume messages from the Amazon SQS queue, and run multiple docker images of lambda functions for each message.
+
+
 ![image](https://user-images.githubusercontent.com/10304038/125674920-127f026c-423d-41fb-a6b1-ba5448b279eb.png)
+
+---
+## TODOs
+
+1) implement tests for api/lambda and services.
+2) add CI (github actions).
+3) add Lambda func for each task (when LocalStack will fix all the bugs with SQS,Lambda connections).
+4) complete implementation of applying Pytorch model on the images.
