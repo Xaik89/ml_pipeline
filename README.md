@@ -9,14 +9,15 @@ The flow of the system is:
 3) optionally: run transformations and computer vision deep learning models on images
 
 LocalStack runs under docker-compose.
-There is also an example of how to build SQS queue bounded with Lambda Functions, that runs in additional docker.
+There is also an example of how to build an SQS queue bonded
+with Lambda Functions, which runs an additional docker.
 
 # Structure of the code
 
 * lambdas - package for lambda functions
 * localstack - docker-compose config for AWS simulations
-* scripts - to populate AWS DB and S3 from dataset
-* src - source code for manage queries and additional proccesing
+* scripts - to populate AWS DB and S3 from the dataset
+* src - source code for manage queries and additional processing
 
 # How to use it
 
@@ -40,6 +41,6 @@ https://www.kaggle.com/paramaggarwal/fashion-product-images-small
 5) you can run jupyter notebook with examples from this repo that uses api code.
 
 ---
-## Architecture of the system to make it scalable
+## The architecture of the system to make it scalable.
 
 ![image](https://user-images.githubusercontent.com/10304038/125674920-127f026c-423d-41fb-a6b1-ba5448b279eb.png)
