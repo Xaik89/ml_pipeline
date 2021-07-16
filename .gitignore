@@ -1,7 +1,6 @@
 __pycache__/
 data/
+.ipynb_checkpoints/
 .env
 
-things_to_do.txt
-design_choices.txt
 response.json
