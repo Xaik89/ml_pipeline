@@ -1,3 +1,6 @@
+import os
+
+import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -6,6 +9,46 @@ from torchvision.models import vgg16
 
 ROI_POOL_SIZE = (3, 3)
 N_LANDMARKS = 8
+
+
+def get_lists_from_anno():
+    src_dir = os.path.dirname(os.path.realpath("__file__"))
+    data_folder = os.path.join(src_dir, "src", "annotations_for_deep_fashion")
+
+    with open(os.path.join(data_folder, "list_attr_cloth.txt")) as f_attr_names:
+        list_attr_names = f_attr_names.read().splitlines()
+
+    with open(os.path.join(data_folder, "list_category_cloth.txt")) as f_category_names:
+        list_category_names = f_category_names.read().splitlines()
+
+    return list_attr_names, list_category_names
+
+
+def _filter_lists(value_list, name_list):
+    new_list = list()
+    for value, name in zip(value_list, name_list):
+        if value:
+            new_list.append(name)
+
+    return new_list
+
+
+def parse_attr_and_category_of_model(
+    list_attr_names, list_category_names, categories, attrs
+):
+
+    categories = list(categories.cpu().detach().numpy())
+    attrs = list(attrs.cpu().detach().numpy())
+    filtered_category_names = list()
+    filtered_attr_names = list()
+
+    for i in range(len(categories)):
+        filtered_category_names.append(
+            _filter_lists(categories[i], list_category_names)
+        )
+        filtered_attr_names.append(_filter_lists(attrs[i], list_attr_names))
+
+    return filtered_attr_names, filtered_category_names
 
 
 def adaptive_max_pool(input, size):
@@ -114,7 +157,7 @@ class FashionNetVgg16NoBn(nn.Module):
         pose_loc = self.loc(pose)
         pose_vis = torch.sigmoid(self.vis(pose))
 
-        # bbs is about bow big the roi box is going to be (area around landmark)
+        # bbs is about how big the roi box is going to be (area around landmark)
         roi_boxes = landmark_predictions_to_roipool_boxes(pose_loc, bbs=3)
         # here you have to decide about the gating policy
         pools = gated_roi_pooling(base_features, roi_boxes, pose_vis < -1000)
@@ -128,6 +171,9 @@ class FashionNetVgg16NoBn(nn.Module):
 
         massive_attr = torch.sigmoid(self.massive_attr(global_and_local))
         categories = torch.sigmoid(self.categories(global_and_local))
+
+        massive_attr = torch.as_tensor((massive_attr - 0.5) > 0, dtype=torch.int32)
+        categories = torch.as_tensor((categories - 0.5) > 0, dtype=torch.int32)
 
         return massive_attr, categories
 
@@ -147,4 +193,11 @@ if __name__ == "__main__":
 
     img = torch.Tensor(torch.rand(2, 3, 224, 224))
 
-    fn(img)
+    massive_attr, categories = fn(img)
+
+    list_attr, list_categories = get_lists_from_anno()
+    print(
+        parse_attr_and_category_of_model(
+            list_attr, list_categories, massive_attr, categories
+        )
+    )

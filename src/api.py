@@ -10,7 +10,11 @@ import torch
 from PIL import Image
 
 from db import DB
-from pytorch_model import FashionNetVgg16NoBn
+from pytorch_model import (
+    FashionNetVgg16NoBn,
+    get_lists_from_anno,
+    parse_attr_and_category_of_model,
+)
 from s3 import S3
 
 
@@ -156,18 +160,48 @@ class API_AWS:
             pil_image = Image.fromarray(np.uint8(new_image)).convert("RGB")
             self._s3.save_new_image(pil_image, path_im)
 
+    @staticmethod
+    def _conver_meta_to_dict(meta_data):
+        return {item["id"]: item for item in meta_data}
+
     def _run_cv_model(self, folder_with_images):
         """
-        run pytorch model on image from output query
-        TODO: complete implementation
+        run pytorch deepfashion model on image from output query
         """
         fn = FashionNetVgg16NoBn()
+        list_attr, list_categories = get_lists_from_anno()
 
-        for im, path_im in self._s3.gen_of_images(folder_with_images):
-            im = np.array(im)
-            massive_attr, categories = fn(torch.from_numpy(im))
+        transform = A.Compose([A.Resize(width=224, height=224), A.Normalize()])
 
-            # next step to update meta file and save it in s3
+        metadata_path = os.path.join(folder_with_images, "metadata.json")
+        meta_data = self._s3.load_meta_data(metadata_path)
+        meta_data_dict = self._conver_meta_to_dict(meta_data)
+
+        # Batch size was chosen without knowing hardware on the server side (bs = 2)
+        # With proper knowledge, we can increase it to process more images per run
+        for imgs, imgs_id in self._s3.gen_batch_of_images(
+            folder_with_images, batch_size=2
+        ):
+            new_imgs = list()
+
+            for img in imgs:
+                if len(img.shape) != 3:
+                    continue
+                transformed_img = transform(image=img)["image"]
+                new_imgs.append(np.transpose(transformed_img, (2, 0, 1)))
+            new_imgs = np.array(new_imgs)
+
+            out_attr, out_categories = fn(torch.from_numpy(new_imgs))
+
+            res_attrs, res_category = parse_attr_and_category_of_model(
+                list_attr, list_categories, out_attr, out_categories
+            )
+
+            for attrs, category, img_id in zip(res_attrs, res_category, imgs_id):
+                meta_data_dict[img_id]["attrs"] = attrs
+                meta_data_dict[img_id]["category"] = category
+
+        self._s3.save_metadata(metadata_path, list(meta_data_dict.values()))
 
 
 if __name__ == "__main__":
@@ -175,7 +209,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--query",
         action="store",
-        default=1,
+        default=5,
         dest="query",
         type=int,
         help="which query to run from 1 up to 5th",

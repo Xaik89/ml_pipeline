@@ -3,6 +3,7 @@ import os
 from io import BytesIO
 
 import boto3
+import numpy as np
 from PIL import Image
 
 from utils import DecimalEncoder
@@ -52,6 +53,23 @@ class S3:
                     )["Body"].read()
 
                     yield Image.open(BytesIO(file_byte_string)), item["Key"]
+
+    def gen_batch_of_images(self, folder: str, batch_size: int = 2):
+        i = 1
+        imgs = list()
+        imgs_id = list()
+
+        for im, path_im in self.gen_of_images(folder):
+            imgs.append(np.array(im, dtype=np.float32))
+            imgs_id.append(int(path_im.split("/")[-1].split(".")[0]))
+
+            if i == batch_size:
+                yield imgs, imgs_id
+                imgs = list()
+                imgs_id = list()
+                i = 1
+            else:
+                i += 1
 
     def save_new_image(self, image, name: str):
         buffer = BytesIO()
